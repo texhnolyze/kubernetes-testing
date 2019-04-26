@@ -1,0 +1,35 @@
+---
+apiVersion: kubeless.io/v1beta1
+kind: Function
+metadata:
+  name: hello-with-data
+  labels:
+    example: event-bus-lambda-subscription
+spec:
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello-with-data
+  deps: ""
+  function: |-
+    module.exports = {
+        main: function (event, context) {
+          console.log(event.data.test)
+          return context;
+        }
+    }
+  runtime: nodejs8
+  type: HTTP
+  handler: handler.main
+  service:
+    ports:
+    - name: http-function-port
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      created-by: kubeless
+      function: hello-with-data
+  topic: hello
